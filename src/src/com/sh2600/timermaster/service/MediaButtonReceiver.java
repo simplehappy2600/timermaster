@@ -3,6 +3,7 @@ package com.sh2600.timermaster.service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -54,4 +55,17 @@ public class MediaButtonReceiver extends BroadcastReceiver {
 		// 终止广播(不让别的程序收到此广播，免受干扰)
 		//abortBroadcast();
 	}
+	
+	private void registerMediaButtonReceiver(){
+//		Log.d(tag, "registerReceiver media button");
+//		IntentFilter intentFilter = new IntentFilter(Intent.ACTION_MEDIA_BUTTON);  
+//		intentFilter.setPriority(100);
+//		//intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY - 1);
+//		registerReceiver(this, intentFilter);		
+	}
+	
+	private void unregisterMediaButtonReceiver(){
+//		Log.d(tag, "unregisterReceiver media button");
+//		unregisterReceiver(this);
+	}	
 }

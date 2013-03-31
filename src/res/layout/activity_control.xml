@@ -1,31 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="220dip"
-    android:layout_height="300dip" >
-    
-	<Button
-	 android:id="@+id/btnStart"
-	 android:layout_width="80dp"
-	 android:layout_height="50dp"
-	 android:text="启动" />
-	
-	<Button
-	 android:id="@+id/btnStop"
-	 android:layout_width="80dp"
-	 android:layout_height="50dp"	 
-	 android:text="停止" />	
-	
-	<Button
-	 android:id="@+id/btnSetting"
-	 android:layout_width="80dp"
-	 android:layout_height="50dp"
-	 android:text="设置" />	
-	
-	<Button
-	 android:id="@+id/btnCancel"
-	 android:layout_width="80dp"
-	 android:layout_height="50dp"
-	 android:text="取消" />
-	
-</LinearLayout>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center" >
+
+    <ImageButton
+        android:id="@+id/btnStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:onClick="btnClick"
+        android:src="@drawable/start" />
+
+    <ImageButton
+        android:id="@+id/btnStop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/btnStart"
+        android:onClick="btnClick"
+        android:src="@drawable/stop" />
+
+    <ImageButton
+        android:id="@+id/btnSetting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnStart"
+        android:onClick="btnClick"
+        android:src="@drawable/setting" />
+
+    <ImageButton
+        android:id="@+id/btnCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/btnSetting"
+        android:layout_toRightOf="@id/btnSetting"
+        android:onClick="btnClick"
+        android:src="@drawable/quit" />
+
+</RelativeLayout>
