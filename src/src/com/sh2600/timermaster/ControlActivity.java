@@ -69,7 +69,12 @@ public class ControlActivity extends Activity implements SharedPreferences.OnSha
 			boolean r = stopService(new Intent(this, TimerService.class));
 			Log.v(tag, "stopService return " + r);
 			Toast.makeText(this, "停止报时服务", Toast.LENGTH_SHORT).show();
-			break;			
+			break;	
+		case R.id.btnPlay:
+			Intent intent = new Intent(this, TimerService.class);
+			intent.putExtra(CVal.Cmd.cmdtype, CVal.Cmd.CMD_Play);			
+			startService(intent);	
+			break;
 		case R.id.btnSetting:
 			startActivity(new Intent(this, SettingsActivity.class));
 			break;

@@ -1,8 +1,6 @@
 package com.sh2600.timermaster.service;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 import android.app.AlarmManager;
 import android.app.Notification;
@@ -85,6 +83,9 @@ public class TimerService extends Service implements SharedPreferences.OnSharedP
 			unregisterMediaButtonReceiver();
 		}
 		
+		cancelAutoQuitTime();
+		timerTask.stop();
+		
 		((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(MOOD_NOTIFICATIONS);
 	}
 	
@@ -100,24 +101,15 @@ public class TimerService extends Service implements SharedPreferences.OnSharedP
 		Log.d(tag, "unregisterReceiver media button");
 		unregisterReceiver(this.mediaButtonReceiver);
 	}
-	
-	private class DEL_AutoQuitTimeReceiver extends BroadcastReceiver {
 
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			TimerService.this.stopSelf();
-		}
-		
-	}
-	
 	private void configAutoQuitTime(String time){
 		
-		Calendar c = this.timerTask.getAlarmTime(time);
+		Calendar c = this.timerTask.getAlarmTimeByDay(time);
 		if (c == null){
 			return;
 		}
 		
-		Log.i(tag, "service will quit at " + c);
+		Log.i(tag, "service will quit at " + c.getTime().toString());
 		
 		Intent intent = Utils.buildIntent(this, TimerService.class, CVal.Action.TimeAutoQuit);
 		intent.putExtra(CVal.Cmd.cmdtype, CVal.Cmd.CMD_Quit);
@@ -179,9 +171,12 @@ public class TimerService extends Service implements SharedPreferences.OnSharedP
 		
 		boolean validClick = false;
 		if (this.configParam.headset_way.equalsIgnoreCase("double")){
-			if (now - lastHeadsetClickTime > headsetClickInterval){
+			if (now - lastHeadsetClickTime < headsetClickInterval){				
+				validClick = true;
+				lastHeadsetClickTime = 0;
+			}
+			else{
 				lastHeadsetClickTime = now;
-				validClick = true;			
 			}
 		}
 		else{
@@ -215,7 +210,8 @@ public class TimerService extends Service implements SharedPreferences.OnSharedP
 		
 		if (ok){
 			//play
-			Log.d(tag, "timer task do" + now);
+			Log.d(tag, "timer task do " + now.getTime().toString());
+			new PlayTask(TimerService.this.getAssets()).execute();
 		}
 		
 			
