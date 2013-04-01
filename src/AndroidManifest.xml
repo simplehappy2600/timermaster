@@ -32,8 +32,7 @@
         
         <service android:name=".service.TimerService" />
         
-        <receiver android:name=".service.MediaButtonReceiver" />
-        <receiver android:name=".service.TestReceiver" />
+        <receiver android:name=".service.MediaButtonReceiver" />        
       	      
 		<receiver android:name=".service.BootReceiver">
 		    <intent-filter>

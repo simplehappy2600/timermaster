@@ -1,5 +1,7 @@
 package com.sh2600.timermaster.service;
 
+import com.sh2600.timermaster.common.CVal;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -45,7 +47,7 @@ public class MediaButtonReceiver extends BroadcastReceiver {
 		long eventTime = event.getEventTime() - event.getDownTime();// 按键按下到松开的时长
 
 		Message msg = Message.obtain();
-		msg.what = 100;
+		msg.what = CVal.Cmd.CMD_HeadsetClick;
 		Bundle data = new Bundle();
 		data.putInt("key_code", keyCode);
 		data.putLong("event_time", eventTime);

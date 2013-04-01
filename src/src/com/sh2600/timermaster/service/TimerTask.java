@@ -7,10 +7,12 @@ import java.util.Date;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+
+import com.sh2600.timermaster.common.CVal;
+import com.sh2600.timermaster.common.Utils;
 
 public class TimerTask {
 	
@@ -37,12 +39,28 @@ public class TimerTask {
 		this.interval = interval;		
 	}
 	
-	private Calendar getTime(String time){		
+	public Calendar getAlarmTime(String time){
+		Calendar t = getTime(time);
+		if (t != null && t.before(Calendar.getInstance())){			
+			t.add(Calendar.DATE, 1);			
+		}
+		return t;
+	}
+	
+	public Calendar getTime(String time){
+		
+		if (time == null){
+			return null;
+		}
+		
 		try {
+			
 			Date d = new SimpleDateFormat("hh:mm").parse(time);
+			
 			Calendar c = Calendar.getInstance();
 			c.set(Calendar.HOUR_OF_DAY, d.getHours());
-			c.set(Calendar.MINUTE, d.getMinutes());			
+			c.set(Calendar.MINUTE, d.getMinutes());
+			
 			return c;
 		} catch (ParseException e) {
 			Log.e(tag, "时间解析错误time=" + time, e);
@@ -50,7 +68,7 @@ public class TimerTask {
 		}
 	}
 	
-	private void start(){		
+	private void start(){
 		enable = true;
 		
 		configStartTime();
@@ -107,36 +125,52 @@ public class TimerTask {
 		}
 	}
 	
-	private void configStartTime(){
-		Calendar startTime = getTime(this.startTime);
-		Intent intent = new Intent(this.context, StartTimeReceiver.class);		
+	public void configStartTime(){
+		Calendar startTime = getAlarmTime(this.startTime);
+		if (startTime == null){
+			return;
+		}
+		Log.i(tag, "start startTime alarm");
+		Intent intent = Utils.buildIntent(this.context, TimerService.class, CVal.Action.TimeIntervalStart);
+		intent.putExtra(CVal.Cmd.cmdtype, CVal.Cmd.CMD_StartInterval);
 	    PendingIntent pendingIntent = PendingIntent.getBroadcast(this.context, 0, intent, 0);
-	    this.alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, startTime.getTimeInMillis(), 24*3600*1000, pendingIntent);		
+	    this.alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, startTime.getTimeInMillis(), CVal.DayMs, pendingIntent);		
 	}
-	private void cancelStartTime(){
-		Intent intent = new Intent(this.context, StartTimeReceiver.class);		
+	
+	public void cancelStartTime(){
+		Log.i(tag, "cancel startTime alarm");
+		Intent intent = Utils.buildIntent(this.context, TimerService.class, CVal.Action.TimeIntervalStart);
 	    PendingIntent pendingIntent = PendingIntent.getBroadcast(this.context, 0, intent, 0);
 	    this.alarmManager.cancel(pendingIntent);		
 	}
-	private void configStopTime(){
-		Calendar stopTime = getTime(this.stopTime);
-		Intent intent = new Intent(this.context, StopTimeReceiver.class);		
+	
+	public void configStopTime(){
+		Calendar time = getAlarmTime(this.stopTime);
+		if (time == null){
+			return;
+		}
+		Log.i(tag, "set stopTime alarm");
+		Intent intent = Utils.buildIntent(this.context, TimerService.class, CVal.Action.TimeIntervalStop);
+		intent.putExtra(CVal.Cmd.cmdtype, CVal.Cmd.CMD_StopInterval);
 	    PendingIntent pendingIntent = PendingIntent.getBroadcast(this.context, 0, intent, 0);
-	    this.alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, stopTime.getTimeInMillis(), 24*3600*1000, pendingIntent);	
+	    this.alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time.getTimeInMillis(), CVal.DayMs, pendingIntent);	
 	}
-	private void cancelStopTime(){
-		Intent intent = new Intent(this.context, StopTimeReceiver.class);		
+	
+	public void cancelStopTime(){
+		Log.i(tag, "cancel stopTime alarm");
+		Intent intent = Utils.buildIntent(this.context, TimerService.class, CVal.Action.TimeIntervalStop);
 	    PendingIntent pendingIntent = PendingIntent.getBroadcast(this.context, 0, intent, 0);
 	    this.alarmManager.cancel(pendingIntent);		
 	}	
-	private void configInterval(){
+	
+	public void configInterval(){
 		if (this.started){
 			return;
 		}
 		
 		this.started = true;
 		
-		Calendar startTime = getTime(this.startTime);
+		Calendar startTime = getAlarmTime(this.startTime);
 		startTime.set(Calendar.MILLISECOND, 0);
 		startTime.set(Calendar.SECOND, 0);
 		startTime.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE) + this.interval);
@@ -144,58 +178,27 @@ public class TimerTask {
 		int m = this.interval%60;		
 		startTime.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE)/m*m);		
 		
-		Intent intent = new Intent(this.context, IntervalReceiver.class);		
+		if (startTime.before(Calendar.getInstance())){
+			startTime.add(Calendar.MINUTE, this.interval);
+		}		
+		
+		Log.i(tag, "set voiceTimer alarm");
+		
+		Intent intent = Utils.buildIntent(this.context, TimerService.class, CVal.Action.TimeIntervalInterval);
+		intent.putExtra(CVal.Cmd.cmdtype, CVal.Cmd.CMD_IntervalInterval);
 	    PendingIntent pendingIntent = PendingIntent.getBroadcast(this.context, 0, intent, 0);
 	    this.alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, startTime.getTimeInMillis(), this.interval*60*1000, pendingIntent);		
 	}
-	private void cancelInterval(){
-		this.started = false;
+	
+	public void cancelInterval(){
 		
-		Intent intent = new Intent(this.context, IntervalReceiver.class); 
+		Log.i(tag, "cancel voiceTimer alarm");
+		
+		Intent intent = Utils.buildIntent(this.context, TimerService.class, CVal.Action.TimeIntervalInterval);
 	    PendingIntent pendingIntent = PendingIntent.getBroadcast(this.context, 0, intent, 0);
-	    this.alarmManager.cancel(pendingIntent);		
+	    this.alarmManager.cancel(pendingIntent);	
+	    
+	    this.started = false;
 	}
 	
-	public class StartTimeReceiver extends BroadcastReceiver {
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			configInterval();
-		}
-		
-	}
- 
-	public class StopTimeReceiver extends BroadcastReceiver {
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			cancelInterval();
-		}
-		
-	}
-	
-	public class IntervalReceiver extends BroadcastReceiver {
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			Calendar now = Calendar.getInstance();
-			Calendar startTime = getTime(TimerTask.this.startTime);
-			Calendar stopTime = getTime(TimerTask.this.stopTime);
-			
-			boolean ok = false;
-			if (startTime.before(stopTime)){
-				ok = startTime.before(now) && now.before(stopTime);
-			}
-			else{
-				ok = now.before(stopTime) || now.after(startTime);
-			}
-			
-			if (ok){
-				//play
-				Log.d(tag, "timer task do" + now);
-			}
-			
-		}
-		
-	}	
 }

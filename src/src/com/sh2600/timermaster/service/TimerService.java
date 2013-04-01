@@ -22,8 +22,11 @@ import android.util.Log;
 
 import com.sh2600.timermaster.ControlActivity;
 import com.sh2600.timermaster.R;
+import com.sh2600.timermaster.common.CVal;
+import com.sh2600.timermaster.common.ConfigParam;
+import com.sh2600.timermaster.common.Utils;
 
-public class TimerService extends Service implements SharedPreferences.OnSharedPreferenceChangeListener{
+public class TimerService extends Service implements SharedPreferences.OnSharedPreferenceChangeListener {
 	
 	private static final String tag = TimerService.class.getSimpleName();
 	
@@ -38,30 +41,14 @@ public class TimerService extends Service implements SharedPreferences.OnSharedP
 	
 	private long lastHeadsetClickTime = 0;
 	private int headsetClickInterval = 300;	
-	private String autoQuitTime;
 	
 	private SharedPreferences sharedPreferences;
 	
-	private String headset_way = "double";
-	private boolean headset_enable;
-	private boolean interval_enable;
-	private int interval_interval;
-	private String interval_starttime;
-	private String interval_stoptime;
-	
-	private final String pref_key_quit_time 		= "pref_key_quit_time";
-	private final String pref_key_headset_enable	= "pref_key_headset_enable";
-	private final String pref_key_headset_way 		= "pref_key_headset_way";
-	private final String pref_key_interval_enable 	= "pref_key_interval_enable";
-	private final String pref_key_interval_interval = "pref_key_interval_interval";
-	private final String pref_key_interval_starttime= "pref_key_interval_starttime";
-	private final String pref_key_interval_stoptime = "pref_key_interval_stoptime";	
-	
-	private TimerTask timerTask;
+	private ConfigParam configParam;
+	private TimerTask timerTask;	
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
@@ -69,50 +56,36 @@ public class TimerService extends Service implements SharedPreferences.OnSharedP
 	public void onCreate() {
 		super.onCreate();
 		Log.d(tag, "onCreate");
+		this.alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);		
+		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);		
+		sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 		
-		init();
+		configParam = new ConfigParam(this);		
+		timerTask = new TimerTask(this);
 		 
 		mediaButtonReceiver = new MediaButtonReceiver(this.handler);	
-		if (this.headset_enable){
+		if (configParam.headset_enable){
 			registerMediaButtonReceiver();
 		}
 		
-		configAutoQuitTime(this.autoQuitTime);
+		configAutoQuitTime(configParam.autoQuitTime);		
 		
-		timerTask = new TimerTask(this);
-		timerTask.initParam(this.interval_starttime, this.interval_stoptime, this.interval_interval);
-		timerTask.onEnableChange(this.interval_enable);
+		timerTask.initParam(configParam.interval_starttime, configParam.interval_stoptime, configParam.interval_interval);
+		timerTask.onEnableChange(configParam.interval_enable);
 		
 		showNotification(R.drawable.ic_launcher, "time master");
-		
-		
+	
 	}
 	
 	@Override
 	public void onDestroy() {	
 		super.onDestroy();
 		Log.d(tag, "onDestroy");
-		if (this.headset_enable){
+		if (configParam.headset_enable){
 			unregisterMediaButtonReceiver();
 		}
 		
 		((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(MOOD_NOTIFICATIONS);
-	}
-	
-	private void init(){
-		this.alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-		
-		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-		
-		this.headset_way = sharedPreferences.getString(pref_key_headset_way, "double");
-		this.headset_enable = sharedPreferences.getBoolean(pref_key_headset_enable, false);
-		this.interval_enable = sharedPreferences.getBoolean(this.pref_key_interval_enable, false);
-		this.interval_interval= Integer.parseInt(sharedPreferences.getString(pref_key_interval_interval, "10"));
-		this.interval_starttime = sharedPreferences.getString(this.pref_key_interval_starttime, null);
-		this.interval_stoptime = sharedPreferences.getString(this.pref_key_interval_stoptime, null);
-		this.autoQuitTime = readParamAutoQuitTime(this.sharedPreferences);	
-		
-		sharedPreferences.registerOnSharedPreferenceChangeListener(this);			
 	}
 	
 	private void registerMediaButtonReceiver(){
@@ -128,7 +101,7 @@ public class TimerService extends Service implements SharedPreferences.OnSharedP
 		unregisterReceiver(this.mediaButtonReceiver);
 	}
 	
-	private class AutoQuitTimeReceiver extends BroadcastReceiver {
+	private class DEL_AutoQuitTimeReceiver extends BroadcastReceiver {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -137,41 +110,23 @@ public class TimerService extends Service implements SharedPreferences.OnSharedP
 		
 	}
 	
-	private String readParamAutoQuitTime(SharedPreferences sharedPreferences){
-		String r = sharedPreferences.getString(pref_key_quit_time, null);
-		if ("00:00".equalsIgnoreCase(r)){
-			r = null;
-		}
-		return r;
-	}
-	
 	private void configAutoQuitTime(String time){
-		if (time == null){
+		
+		Calendar c = this.timerTask.getAlarmTime(time);
+		if (c == null){
 			return;
 		}
 		
-		Date date = null;
-		try{
-			date = new SimpleDateFormat("hh:mm").parse(time);
-		}
-		catch (Exception e) {
-			Log.e(tag, "解析时间异常, time=" + time , e);
-		}
-		if (date == null){
-			return;
-		}
+		Log.i(tag, "service will quit at " + c);
 		
-		Calendar c = Calendar.getInstance();
-		c.set(Calendar.HOUR_OF_DAY, date.getHours());
-		c.set(Calendar.MINUTE, date.getMinutes());		
-		
-		Intent intent = new Intent(this, AutoQuitTimeReceiver.class);		
-	    PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-	    this.alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), 24*3600*1000, pendingIntent);
+		Intent intent = Utils.buildIntent(this, TimerService.class, CVal.Action.TimeAutoQuit);
+		intent.putExtra(CVal.Cmd.cmdtype, CVal.Cmd.CMD_Quit);
+		PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, 0);		
+	    this.alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), CVal.DayMs, pendingIntent);
 	}	
 	
 	private void cancelAutoQuitTime(){
-		Intent intent = new Intent(this, AutoQuitTimeReceiver.class);  
+		Intent intent = Utils.buildIntent(this, TimerService.class, CVal.Action.TimeAutoQuit);		
 	    PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
 	    this.alarmManager.cancel(pendingIntent);
 	}
@@ -179,36 +134,92 @@ public class TimerService extends Service implements SharedPreferences.OnSharedP
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.d(tag, "onStartCommand");
-		if (intent.getBooleanExtra("trackball", false)){
-			new PlayTask(this.getAssets()).execute();
+		
+		int cmdType = intent.getIntExtra(CVal.Cmd.cmdtype, CVal.Cmd.CMD_None);
+		if (cmdType != CVal.Cmd.CMD_None){
+			handler.sendEmptyMessage(cmdType);
 		}
+
 		return super.onStartCommand(intent, flags, startId);
 	}
 	
 	final Handler handler = new Handler(){
 		
 		@Override
-		public void handleMessage(Message msg) {	
+		public void handleMessage(Message msg) {
 			
-			long now = System.currentTimeMillis();
-			
-			boolean validClick = false;
-			if (TimerService.this.headset_way.equalsIgnoreCase("double")){
-				if (now - lastHeadsetClickTime > headsetClickInterval){
-					lastHeadsetClickTime = now;
-					validClick = true;			
-				}
-			}
-			else{
-				validClick = true;
-			}
-			
-			if (validClick && (now - lastPlayTime > playInterval)){
-				lastPlayTime = now;
-				new PlayTask(TimerService.this.getAssets()).execute();			
-			}
+			switch (msg.what) {
+			case CVal.Cmd.CMD_Quit:
+				stopSelf();
+				break;
+			case CVal.Cmd.CMD_Play:
+				new PlayTask(TimerService.this.getAssets()).execute();
+				break;
+			case CVal.Cmd.CMD_HeadsetClick:
+				handle_heahset();
+				break;
+			case CVal.Cmd.CMD_StartInterval:
+				timerTask.configInterval();
+				break;
+			case CVal.Cmd.CMD_StopInterval:
+				timerTask.cancelInterval();
+				break;
+			case CVal.Cmd.CMD_IntervalInterval:
+				handle_interval();
+				break;
+			default:
+				break;
+			}		
+
 		}
 	};
+	
+	private void handle_heahset(){
+		long now = System.currentTimeMillis();
+		
+		boolean validClick = false;
+		if (this.configParam.headset_way.equalsIgnoreCase("double")){
+			if (now - lastHeadsetClickTime > headsetClickInterval){
+				lastHeadsetClickTime = now;
+				validClick = true;			
+			}
+		}
+		else{
+			validClick = true;
+		}
+		
+		if (validClick && (now - lastPlayTime > playInterval)){
+			lastPlayTime = now;
+			new PlayTask(TimerService.this.getAssets()).execute();			
+		}		
+	}
+	
+	private void handle_interval(){
+		
+		if (!this.configParam.interval_enable){
+			this.timerTask.cancelInterval();
+			return;
+		}
+
+		Calendar now = Calendar.getInstance();
+		Calendar startTime = timerTask.getTime(configParam.interval_starttime);
+		Calendar stopTime = timerTask.getTime(configParam.interval_stoptime);		
+		
+		boolean ok = false;
+		if (startTime.before(stopTime)){
+			ok = startTime.before(now) && now.before(stopTime);
+		}
+		else{
+			ok = now.before(stopTime) || now.after(startTime);
+		}
+		
+		if (ok){
+			//play
+			Log.d(tag, "timer task do" + now);
+		}
+		
+			
+	}
 	
     private void showNotification(int moodId, String text) {
 
@@ -226,38 +237,42 @@ public class TimerService extends Service implements SharedPreferences.OnSharedP
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 		
-		if (pref_key_headset_enable.equalsIgnoreCase(key)){
-			boolean new_headset_enable = sharedPreferences.getBoolean(pref_key_headset_enable, false);
-			if (new_headset_enable && !this.headset_enable){
-				this.headset_enable = true;
+		if (this.configParam.pref_key_headset_enable.equalsIgnoreCase(key)){
+			boolean new_headset_enable = sharedPreferences.getBoolean(this.configParam.pref_key_headset_enable, false);
+			if (new_headset_enable && !this.configParam.headset_enable){
+				this.configParam.headset_enable = true;
 				registerMediaButtonReceiver();
 			}
-			if (!new_headset_enable && this.headset_enable){
+			if (!new_headset_enable && this.configParam.headset_enable){
 				unregisterMediaButtonReceiver();
-				this.headset_enable = false;
+				this.configParam.headset_enable = false;
 			}			
 		}
-		else if (pref_key_headset_way.equalsIgnoreCase(key)){
-			this.headset_way = sharedPreferences.getString(pref_key_headset_way, "double");	
+		else if (this.configParam.pref_key_headset_way.equalsIgnoreCase(key)){
+			this.configParam.headset_way = sharedPreferences.getString(this.configParam.pref_key_headset_way, "double");	
 		}
-		else if (pref_key_quit_time.equalsIgnoreCase(key)){			
+		else if (this.configParam.pref_key_quit_time.equalsIgnoreCase(key)){			
 			cancelAutoQuitTime();
-			this.autoQuitTime = readParamAutoQuitTime(sharedPreferences);
-			configAutoQuitTime(this.autoQuitTime);
+			configParam.autoQuitTime = configParam.readParamAutoQuitTime(sharedPreferences);
+			configAutoQuitTime(configParam.autoQuitTime);
 		}
-		else if (pref_key_interval_enable.equalsIgnoreCase(key)){
-			this.timerTask.onEnableChange(sharedPreferences.getBoolean(pref_key_interval_enable, false));
+		else if (this.configParam.pref_key_interval_enable.equalsIgnoreCase(key)){
+			this.timerTask.onEnableChange(sharedPreferences.getBoolean(
+					this.configParam.pref_key_interval_enable, false)
+			);
 		}
-		else if (pref_key_interval_interval.equalsIgnoreCase(key)){
-			this.timerTask.onIntervalChange(sharedPreferences.getString(pref_key_interval_interval, "0"));
+		else if (this.configParam.pref_key_interval_interval.equalsIgnoreCase(key)){
+			this.timerTask.onIntervalChange(sharedPreferences.getString(
+					this.configParam.pref_key_interval_interval, "0")
+			);
 		}
-		else if (pref_key_interval_starttime.equalsIgnoreCase(key)){
-			this.timerTask.onStartTimeChange(sharedPreferences.getString(pref_key_interval_starttime, null));
+		else if (this.configParam.pref_key_interval_starttime.equalsIgnoreCase(key)){
+			this.timerTask.onStartTimeChange(sharedPreferences.getString(this.configParam.pref_key_interval_starttime, null));
 		}
-		else if (pref_key_interval_stoptime.equalsIgnoreCase(key)){
-			this.timerTask.onStopTimeChange(sharedPreferences.getString(pref_key_interval_stoptime, null));
+		else if (this.configParam.pref_key_interval_stoptime.equalsIgnoreCase(key)){
+			this.timerTask.onStopTimeChange(sharedPreferences.getString(this.configParam.pref_key_interval_stoptime, null));
 		}
-	}
+	}	
 
 
 }

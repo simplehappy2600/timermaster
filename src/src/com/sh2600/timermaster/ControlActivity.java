@@ -1,16 +1,9 @@
 package com.sh2600.timermaster;
 
-import java.util.Calendar;
-
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -19,9 +12,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.sh2600.timermaster.service.TestReceiver;
+import com.sh2600.timermaster.common.CVal;
 import com.sh2600.timermaster.service.TimerService;
-import com.sh2600.timermaster.service.TimerTask.IntervalReceiver;
 
 public class ControlActivity extends Activity implements SharedPreferences.OnSharedPreferenceChangeListener{
 	
@@ -41,13 +33,15 @@ public class ControlActivity extends Activity implements SharedPreferences.OnSha
 		sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 		
 		if (true){
-			Calendar now = Calendar.getInstance();
-			Intent intent = new Intent(this, TestReceiver.class);		
-		    PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-		    ((AlarmManager)this.getSystemService(Context.ALARM_SERVICE))
-		    	//.setRepeating(AlarmManager.RTC_WAKEUP, now.getTimeInMillis(), 5*1000, pendingIntent);	
-		    	.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 100, 5*1000, pendingIntent);
+			Intent i1 = new Intent(this, TimerService.class);
+			i1.setAction("a1");
+			
+			Intent i2 = new Intent(this, TimerService.class);
+			i2.setAction("a1");
+			
+			Log.d(tag, "filterEquals: " + i1.filterEquals(i2));
 		}
+
 	}
 	
 //	public class TestReceiver extends BroadcastReceiver {
@@ -91,12 +85,13 @@ public class ControlActivity extends Activity implements SharedPreferences.OnSha
 	@Override
 	public boolean onTrackballEvent(MotionEvent event) {
 		
-		if (event.getAction() == MotionEvent.ACTION_UP){
-			Intent intent = new Intent(this, TimerService.class);
-			intent.putExtra("trackball", true);
-			startService(intent);
-			return true;
-		}
+//		if (event.getAction() == MotionEvent.ACTION_UP){
+//			Intent intent = new Intent(this, TimerService.class);
+//			intent.putExtra(CVal.Cmd.cmdtype, CVal.Cmd.CMD_PLAY);
+//			
+//			startService(intent);
+//			return true;
+//		}
 
 		return super.onTrackballEvent(event);
 	}
