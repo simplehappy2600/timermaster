@@ -1,21 +1,14 @@
 <resources>
     
     <string name="pref_key_boot_enable">pref_key_boot_enable</string>
-    <string name="pref_key_boot_title">开机自动启动</string>
-    
-    <string name="pref_key_quit_time_summary">设置为00:00表示不退出</string>
-    <string name="pref_key_quit_time_title">自动退出报时服务</string>
-    
-    <string name="pref_key_timeformat12_summary">24小时格式</string>
-    <string name="pref_key_timeformat12_title">使用12小时格式</string>
     
     <string-array name="pref_key_interval_titles">
-        <item>1分钟</item>
-        <item>5分钟</item>
-        <item>10分钟</item>
-        <item>15分钟</item>
-        <item>30分钟</item>
-        <item>60分钟</item>        
+        <item>@string/minute1</item>
+        <item>@string/minute5</item>
+        <item>@string/minute10</item>
+        <item>@string/minute15</item>
+        <item>@string/minute30</item>
+        <item>@string/minute60</item>        
     </string-array>
     <string-array name="pref_key_interval_values">
         <item>1</item>
@@ -30,8 +23,8 @@
      -->
     
     <string-array name="pref_headset_titles">
-        <item>单击</item>
-        <item>双击</item>        
+        <item>@string/singleClick</item>
+        <item>@string/doubleClick</item>        
     </string-array>
    
     <string-array name="pref_headset_values">
@@ -40,15 +33,13 @@
     </string-array>   
     
     <string-array name="pref_key_language_titles">
-        <item>中文</item>
-        <item>英语</item>
+        <item>@string/languageChinaese</item>
+        <item>@string/languageEnglish</item>
     </string-array>
    
     <string-array name="pref_key_language_values">
         <item>cn</item>
         <item>en</item>
-    </string-array>      
-        
-    <string name="language_default">cn</string>
+    </string-array>    
 
 </resources>

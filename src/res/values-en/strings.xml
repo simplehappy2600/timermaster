@@ -1,5 +1,47 @@
 <resources>
 
-    <string name="app_name">语音报时</string>
+
+    <string name="app_name">VoiceTimeStrike</string>
+    
+   	<string name="minute1">one minute</string>
+    <string name="minute5">five minute</string>
+    <string name="minute10">ten minute</string>
+    <string name="minute15">fifteen minute</string>
+    <string name="minute30">thirty minute</string>
+    <string name="minute60">sixty minute</string>
+    
+    <string name="singleClick">single click</string>
+    <string name="doubleClick">double click</string>
+    
+    <string name="languageChinaese">Chinaese</string>
+    <string name="languageEnglish">English</string>
+    
+    <string name="language">Language</string>
+    <string name="about">About</string>
+    <string name="timerInerval">Timer interval(m)</string>    
+    
+    
+    <string name="enableTimestrike">Enable time Strike</string>
+    <string name="timestrike">time strike</string>
+    <string name="startTime">Start time</string>
+    <string name="stopTime">Stop time</string>    
+	
+    <string name="wireControl">Headset</string>
+    <string name="usewireControl">Use headset</string>    
+    <string name="wireControlWay">Headset control way</string>
+    <string name="wireControlWaySummary">single or double click media button</string>
+    
+    <string name="pref_key_boot_title">Enable start on boot</string>
+    
+    <string name="pref_key_quit_time_summary">not quit when 00:00</string>
+    <string name="pref_key_quit_time_title">Auto quit</string>
+    
+    <string name="pref_key_timeformat12_summary">24 hour format</string>
+    <string name="pref_key_timeformat12_title">12 hour format</string>    
+    
+    <string name="language_default">en</string>
+    
+    <string name="btnOk">OK</string>
+    <string name="btnCancel">Cancel</string>
 
 </resources>

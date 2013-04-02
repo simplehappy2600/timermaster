@@ -32,8 +32,8 @@ public class TimePreference extends DialogPreference {
 		super(ctxt, attrs, defStyle);
 
 		is24HourFormat = DateFormat.is24HourFormat(ctxt);
-		setPositiveButtonText("确定");
-		setNegativeButtonText("取消");
+		setPositiveButtonText(R.string.btnOk);	
+		setNegativeButtonText(R.string.btnCancel);
 	}
 
 	@Override

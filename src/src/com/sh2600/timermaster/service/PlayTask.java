@@ -15,12 +15,6 @@ import android.util.Log;
 /**
  * 播放时间5188ms
  * 
- * It's two o'clock. 现在两点。
- * It is half past two.两点半。
- * It's ten past eight.八点十分了。
- * 
- * http://zhidao.baidu.com/question/89930778.html
- * 
  * @author 
  *
  */
@@ -42,10 +36,6 @@ public class PlayTask extends AsyncTask<Void, Void, Void> implements MediaPlayer
 	@Override
 	protected Void doInBackground(Void... params) {		
 		Log.v(tag, "start play " + System.currentTimeMillis());        		
-		
-		if (true){
-			return null;
-		}
 		
 		sounds.add("sound/nowtime.mp3");		
 		//play sound		

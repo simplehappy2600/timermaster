@@ -224,10 +224,13 @@ public class TimerService extends Service implements SharedPreferences.OnSharedP
 	}
 	
 	private void playsound(){
-		//new PlayTask(TimerService.this).execute();
-		
-		//mTts.speak("It's two o'clock", TextToSpeech.QUEUE_ADD, null);
-		mTts.speak("It's " + Calendar.getInstance().getTime().toString(), TextToSpeech.QUEUE_ADD, null);
+
+		if ("cn".equalsIgnoreCase(this.configParam.language)){
+			new PlayTask(TimerService.this).execute();
+		}
+		else{
+			new PlayEnTask(mTts).play();	
+		}		
 	}
 	
     private void showNotification(int moodId, String text) {
@@ -282,6 +285,10 @@ public class TimerService extends Service implements SharedPreferences.OnSharedP
 		else if (this.configParam.pref_key_interval_stoptime.equalsIgnoreCase(key)){
 			this.timerTask.onStopTimeChange(sharedPreferences.getString(this.configParam.pref_key_interval_stoptime, null));
 		}
+		else if (this.configParam.pref_key_language.equalsIgnoreCase(key)){
+			this.configParam.language = sharedPreferences.getString(this.configParam.pref_key_language, "cn");
+		}
+		
 	}	
 
 	//TextToSpeech.OnInitListener

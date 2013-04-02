@@ -1,9 +1,9 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <CheckBoxPreference
-        android:defaultValue="true"
+    <CheckBoxPreference        
         android:key="@string/pref_key_boot_enable"
-        android:title="@string/pref_key_boot_title" />"
+        android:title="@string/pref_key_boot_title"
+        android:defaultValue="false" />
     
 	<com.sh2600.timermaster.TimePreference
 		android:key="pref_key_quit_time"
@@ -21,73 +21,69 @@
     
     <PreferenceCategory
         android:key="pref_key_headset" 
-        android:title="线控" >
+        android:title="@string/wireControl" >
 		<CheckBoxPreference
 	        android:defaultValue="true"
 	        android:key="pref_key_headset_enable"
-	        android:summary="使用耳机线控"
-	        android:title="使用线控 " />
+	        android:title="@string/usewireControl" />
 
 		<ListPreference 
 		    android:dependency="pref_key_headset_enable"
 		    android:key="pref_key_headset_way"
 		    android:entries="@array/pref_headset_titles"
 		    android:entryValues="@array/pref_headset_values"
-		    android:title="线控方式"
-		    android:summary="单击或双击播放按钮"
+		    android:title="@string/wireControlWay"
+		    android:summary="@string/wireControlWaySummary"
 		    android:defaultValue="double"
 		    />
 
 	</PreferenceCategory>            
     
     <PreferenceCategory 
-        android:title="定点报时"
+        android:title="@string/timestrike"
         android:key="pref_key_interval">
         
       	<CheckBoxPreference
 	        android:defaultValue="false"
 	        android:key="pref_key_interval_enable"	        
-	        android:title="启用定点报时" />
+	        android:title="@string/enableTimestrike" />
       	
 		<com.sh2600.timermaster.TimePreference
 			android:key="pref_key_interval_starttime"
 	        android:showDefault="true"
 	        android:defaultValue="07:00"
-	        android:summary="开始报时"
-	        android:title="开始时间" />   
+	        android:title="@string/startTime" />   
 	        
 		<com.sh2600.timermaster.TimePreference
 			android:key="pref_key_interval_stoptime"
 	        android:showDefault="true"
 	        android:defaultValue="08:00"
-	        android:summary="停止报时"
-	        android:title="停止时间" />	
+	        android:title="@string/stopTime" />	
 	        
 		<ListPreference 
 		    android:key="pref_key_interval_interval"
 		    android:entries="@array/pref_key_interval_titles"
 		    android:entryValues="@array/pref_key_interval_values"
-		    android:title="时间间隔(分)"		
+		    android:title="@string/timerInerval"		
 		    android:defaultValue="10"    
 		    />	
             
     </PreferenceCategory> 
 
-    <PreferenceCategory> 
-        <!-- 语言 --> 
+    <PreferenceCategory>        
 		<ListPreference 
 		    android:key="pref_key_language"
 		    android:entries="@array/pref_key_language_titles"
 		    android:entryValues="@array/pref_key_language_values"
-		    android:title="语言"		
+		    android:title="@string/language"		
 		    android:defaultValue="@string/language_default"    
 		    />      
 		      
         <!-- about -->
 		<Preference 
 	            android:key="pref_key_about"            
-	            android:summary="版权所有@http://simplehappy.iteye.com"
-	            android:title="关于" />
+	            android:summary="Copyright@http://simplehappy.iteye.com"
+	            android:title="@string/about" />
 	</PreferenceCategory>          
 
 </PreferenceScreen>

@@ -12,7 +12,8 @@ public class ConfigParam {
 	public static final String pref_key_interval_enable 	= "pref_key_interval_enable";
 	public static final String pref_key_interval_interval 	= "pref_key_interval_interval";
 	public static final String pref_key_interval_starttime	= "pref_key_interval_starttime";
-	public static final String pref_key_interval_stoptime 	= "pref_key_interval_stoptime";	
+	public static final String pref_key_interval_stoptime 	= "pref_key_interval_stoptime";
+	public static final String pref_key_language 			= "pref_key_language";
 	
 	public String autoQuitTime;
 	
