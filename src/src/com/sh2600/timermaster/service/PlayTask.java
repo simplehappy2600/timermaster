@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.media.MediaPlayer;
@@ -12,29 +13,41 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 /**
- * 播放时间6697ms
+ * 播放时间5188ms
+ * 
+ * It's two o'clock. 现在两点。
+ * It is half past two.两点半。
+ * It's ten past eight.八点十分了。
+ * 
+ * http://zhidao.baidu.com/question/89930778.html
+ * 
  * @author 
  *
  */
-public class PlayTask extends AsyncTask<Void, Void, Void> implements MediaPlayer.OnCompletionListener{
-
-	final String tag = PlayTask.class.getSimpleName();
+public class PlayTask extends AsyncTask<Void, Void, Void> implements MediaPlayer.OnCompletionListener {
 	
-	MediaPlayer mp = null; 
-	List<String> sounds = new ArrayList<String>();
-	int idx = 0;
+	private final String tag = PlayTask.class.getSimpleName();
 	
-	AssetManager assetManager;
+	private MediaPlayer mp = null; 
+	private List<String> sounds = new ArrayList<String>();
+	private int idx = 0;
 	
-	public PlayTask(AssetManager assetManager){
-		this.assetManager = assetManager;
+	private AssetManager assetManager;
+	//private Context context;	
+	
+	public PlayTask(Context context){		
+		this.assetManager = context.getAssets();				
 	}
 
 	@Override
-	protected Void doInBackground(Void... params) {
-		Log.v(tag, "start play " + System.currentTimeMillis());
-		sounds.add("sound/nowtime.mp3");
+	protected Void doInBackground(Void... params) {		
+		Log.v(tag, "start play " + System.currentTimeMillis());        		
 		
+		if (true){
+			return null;
+		}
+		
+		sounds.add("sound/nowtime.mp3");		
 		//play sound		
 		Calendar c = Calendar.getInstance();
 	
@@ -110,6 +123,5 @@ public class PlayTask extends AsyncTask<Void, Void, Void> implements MediaPlayer
 		
 		mp.start();	
 	}
-	
 
 }

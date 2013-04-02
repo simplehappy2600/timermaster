@@ -1,13 +1,13 @@
 package com.sh2600.timermaster.service;
 
 import java.util.Calendar;
+import java.util.Locale;
 
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 
 import com.sh2600.timermaster.ControlActivity;
@@ -24,7 +25,7 @@ import com.sh2600.timermaster.common.CVal;
 import com.sh2600.timermaster.common.ConfigParam;
 import com.sh2600.timermaster.common.Utils;
 
-public class TimerService extends Service implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class TimerService extends Service implements SharedPreferences.OnSharedPreferenceChangeListener, TextToSpeech.OnInitListener {
 	
 	private static final String tag = TimerService.class.getSimpleName();
 	
@@ -43,7 +44,9 @@ public class TimerService extends Service implements SharedPreferences.OnSharedP
 	private SharedPreferences sharedPreferences;
 	
 	private ConfigParam configParam;
-	private TimerTask timerTask;	
+	private TimerTask timerTask;
+	
+	private TextToSpeech mTts;
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -54,6 +57,9 @@ public class TimerService extends Service implements SharedPreferences.OnSharedP
 	public void onCreate() {
 		super.onCreate();
 		Log.d(tag, "onCreate");
+		
+		mTts = new TextToSpeech(this, this);
+		
 		this.alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);		
 		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);		
 		sharedPreferences.registerOnSharedPreferenceChangeListener(this);
@@ -91,7 +97,8 @@ public class TimerService extends Service implements SharedPreferences.OnSharedP
 	
 	private void registerMediaButtonReceiver(){
 		Log.d(tag, "registerReceiver media button");
-		IntentFilter intentFilter = new IntentFilter(Intent.ACTION_MEDIA_BUTTON);  
+		IntentFilter intentFilter = new IntentFilter(Intent.ACTION_MEDIA_BUTTON);
+		//TODO
 		intentFilter.setPriority(100);
 		//intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY - 1);
 		registerReceiver(mediaButtonReceiver, intentFilter);		
@@ -109,10 +116,11 @@ public class TimerService extends Service implements SharedPreferences.OnSharedP
 			return;
 		}
 		
-		Log.i(tag, "service will quit at " + c.getTime().toString());
+		Log.i(tag, "service will quit at " + Utils.getDateString(c.getTime()));
 		
-		Intent intent = Utils.buildIntent(this, TimerService.class, CVal.Action.TimeAutoQuit);
-		intent.putExtra(CVal.Cmd.cmdtype, CVal.Cmd.CMD_Quit);
+		Intent intent = Utils.buildCmdIntent(this, TimerService.class, 
+				CVal.Action.TimeAutoQuit, CVal.Cmd.CMD_Quit
+		);		
 		PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, 0);		
 	    this.alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), CVal.DayMs, pendingIntent);
 	}	
@@ -145,7 +153,7 @@ public class TimerService extends Service implements SharedPreferences.OnSharedP
 				stopSelf();
 				break;
 			case CVal.Cmd.CMD_Play:
-				new PlayTask(TimerService.this.getAssets()).execute();
+				playsound();
 				break;
 			case CVal.Cmd.CMD_HeadsetClick:
 				handle_heahset();
@@ -185,7 +193,7 @@ public class TimerService extends Service implements SharedPreferences.OnSharedP
 		
 		if (validClick && (now - lastPlayTime > playInterval)){
 			lastPlayTime = now;
-			new PlayTask(TimerService.this.getAssets()).execute();			
+			playsound();			
 		}		
 	}
 	
@@ -209,12 +217,17 @@ public class TimerService extends Service implements SharedPreferences.OnSharedP
 		}
 		
 		if (ok){
-			//play
-			Log.d(tag, "timer task do " + now.getTime().toString());
-			new PlayTask(TimerService.this.getAssets()).execute();
-		}
-		
+			//play			
+			playsound();
+		}		
 			
+	}
+	
+	private void playsound(){
+		//new PlayTask(TimerService.this).execute();
+		
+		//mTts.speak("It's two o'clock", TextToSpeech.QUEUE_ADD, null);
+		mTts.speak("It's " + Calendar.getInstance().getTime().toString(), TextToSpeech.QUEUE_ADD, null);
 	}
 	
     private void showNotification(int moodId, String text) {
@@ -225,7 +238,7 @@ public class TimerService extends Service implements SharedPreferences.OnSharedP
 
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, ControlActivity.class), 0);
 
-        notification.setLatestEventInfo(this, "test", text, contentIntent);
+        notification.setLatestEventInfo(this, "语音报时", text, contentIntent);
 
         ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(MOOD_NOTIFICATIONS, notification);
     }
@@ -252,6 +265,7 @@ public class TimerService extends Service implements SharedPreferences.OnSharedP
 			configParam.autoQuitTime = configParam.readParamAutoQuitTime(sharedPreferences);
 			configAutoQuitTime(configParam.autoQuitTime);
 		}
+		
 		else if (this.configParam.pref_key_interval_enable.equalsIgnoreCase(key)){
 			this.timerTask.onEnableChange(sharedPreferences.getBoolean(
 					this.configParam.pref_key_interval_enable, false)
@@ -270,5 +284,34 @@ public class TimerService extends Service implements SharedPreferences.OnSharedP
 		}
 	}	
 
+	//TextToSpeech.OnInitListener
+	@Override
+	public void onInit(int status) {
+		
+		Log.v(tag, "TextToSpeech.OnInitListener");
+		
+        // status can be either TextToSpeech.SUCCESS or TextToSpeech.ERROR.
+        if (status == TextToSpeech.SUCCESS) {
+            int result = mTts.setLanguage(Locale.US);
+            // Try this someday for some interesting results.
+            // int result mTts.setLanguage(Locale.FRANCE);
+            if (result == TextToSpeech.LANG_MISSING_DATA ||
+                result == TextToSpeech.LANG_NOT_SUPPORTED) {
+               // Lanuage data is missing or the language is not supported.
+                Log.e(tag, "Language is not available.");
+            } else {
+                // Check the documentation for other possible result codes.
+                // For example, the language may be available for the locale,
+                // but not for the specified country and variant.
 
+                // The TTS engine has been successfully initialized.
+                // Allow the user to press the button for the app to speak again.
+                
+            }
+        } else {
+            // Initialization failed.
+            Log.e(tag, "Could not initialize TextToSpeech.");
+        }
+    		
+	}
 }

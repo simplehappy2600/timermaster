@@ -131,9 +131,8 @@ public class TimerTask {
 		if (startTime == null){
 			return;
 		}
-		Log.i(tag, "start startTime alarm " + startTime.getTime().toString());
-		Intent intent = Utils.buildIntent(this.context, TimerService.class, CVal.Action.TimeIntervalStart);
-		intent.putExtra(CVal.Cmd.cmdtype, CVal.Cmd.CMD_StartInterval);
+		Log.i(tag, "start startTime alarm " + Utils.getDateString(startTime.getTime()));
+		Intent intent = Utils.buildCmdIntent(this.context, TimerService.class, CVal.Action.TimeIntervalStart, CVal.Cmd.CMD_StartInterval);		
 	    PendingIntent pendingIntent = PendingIntent.getService(this.context, 0, intent, 0);
 	    this.alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, startTime.getTimeInMillis(), CVal.DayMs, pendingIntent);		
 	}
@@ -150,9 +149,8 @@ public class TimerTask {
 		if (time == null){
 			return;
 		}
-		Log.i(tag, "set stopTime alarm " + time.getTime().toString());
-		Intent intent = Utils.buildIntent(this.context, TimerService.class, CVal.Action.TimeIntervalStop);
-		intent.putExtra(CVal.Cmd.cmdtype, CVal.Cmd.CMD_StopInterval);
+		Log.i(tag, "set stopTime alarm " + Utils.getDateString(time.getTime()));
+		Intent intent = Utils.buildCmdIntent(this.context, TimerService.class, CVal.Action.TimeIntervalStop, CVal.Cmd.CMD_StopInterval);		
 	    PendingIntent pendingIntent = PendingIntent.getService(this.context, 0, intent, 0);
 	    this.alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time.getTimeInMillis(), CVal.DayMs, pendingIntent);	
 	}
@@ -179,11 +177,11 @@ public class TimerTask {
 		
 		time.set(Calendar.MINUTE,  + m + this.interval - m%this.interval);
 		
-		Log.i(tag, "set voiceTimer alarm " + time.getTime().toString());
+		Log.i(tag, "set voiceTimer alarm " + Utils.getDateString(time.getTime()));
 		
-		Intent intent = Utils.buildIntent(this.context, TimerService.class, CVal.Action.TimeIntervalInterval);
-		intent.putExtra(CVal.Cmd.cmdtype, CVal.Cmd.CMD_IntervalInterval);
-		
+		Intent intent = Utils.buildCmdIntent(this.context, TimerService.class, 
+				CVal.Action.TimeIntervalInterval, CVal.Cmd.CMD_IntervalInterval
+		);		
 	    PendingIntent pendingIntent = PendingIntent.getService(this.context, 0, intent, 0);
 	    this.alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time.getTimeInMillis(), this.interval*60*1000, pendingIntent);		
 	}

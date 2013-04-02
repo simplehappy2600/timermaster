@@ -21,7 +21,8 @@ public class ConfigParam {
 	public boolean interval_enable 		= false;
 	public int interval_interval 		= 10;
 	public String interval_starttime	= "07:00";
-	public String interval_stoptime 	= "08:00";
+	public String interval_stoptime 	= "08:00";	
+	public String language 				= "cn";
 	
 	private Context context;
 	

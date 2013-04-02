@@ -31,12 +31,24 @@
     
     <string-array name="pref_headset_titles">
         <item>单击</item>
-        <item>双击</item>
+        <item>双击</item>        
     </string-array>
    
     <string-array name="pref_headset_values">
         <item>single</item>
         <item>double</item>
-    </string-array>    
+    </string-array>   
+    
+    <string-array name="pref_key_language_titles">
+        <item>中文</item>
+        <item>英语</item>
+    </string-array>
+   
+    <string-array name="pref_key_language_values">
+        <item>cn</item>
+        <item>en</item>
+    </string-array>      
+        
+    <string name="language_default">cn</string>
 
 </resources>

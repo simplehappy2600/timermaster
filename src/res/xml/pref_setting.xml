@@ -75,6 +75,15 @@
 
     <PreferenceCategory> 
         <!-- 语言 --> 
+		<ListPreference 
+		    android:key="pref_key_language"
+		    android:entries="@array/pref_key_language_titles"
+		    android:entryValues="@array/pref_key_language_values"
+		    android:title="语言"		
+		    android:defaultValue="@string/language_default"    
+		    />      
+		      
+        <!-- about -->
 		<Preference 
 	            android:key="pref_key_about"            
 	            android:summary="版权所有@http://simplehappy.iteye.com"
