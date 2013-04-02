@@ -36,8 +36,8 @@
         android:id="@+id/btnSetting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/btnPlay"
-        android:layout_alignParentLeft="true"
+        android:layout_below="@id/btnStop"
+        android:layout_alignLeft="@id/btnStop"
         android:onClick="btnClick"
         android:src="@drawable/setting" />
 
@@ -45,8 +45,8 @@
         android:id="@+id/btnCancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/btnSetting"
-        android:layout_alignRight="@id/btnPlay"
+        android:layout_below="@id/btnSetting"
+        android:layout_alignLeft="@id/btnSetting"
         android:onClick="btnClick"
         android:src="@drawable/quit" />
 

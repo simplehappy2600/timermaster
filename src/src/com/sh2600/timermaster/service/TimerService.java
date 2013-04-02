@@ -77,7 +77,7 @@ public class TimerService extends Service implements SharedPreferences.OnSharedP
 		timerTask.initParam(configParam.interval_starttime, configParam.interval_stoptime, configParam.interval_interval);
 		timerTask.onEnableChange(configParam.interval_enable);
 		
-		showNotification(R.drawable.ic_launcher, "time master");
+		showNotification();
 	
 	}
 	
@@ -233,7 +233,10 @@ public class TimerService extends Service implements SharedPreferences.OnSharedP
 		}		
 	}
 	
-    private void showNotification(int moodId, String text) {
+    private void showNotification() {    	
+    	
+    	int moodId = R.drawable.ic_launcher;
+    	String text = getResources().getString(R.string.notificationText);
 
     	Log.d(tag, "showNotification");
     	
@@ -241,7 +244,7 @@ public class TimerService extends Service implements SharedPreferences.OnSharedP
 
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, ControlActivity.class), 0);
 
-        notification.setLatestEventInfo(this, "语音报时", text, contentIntent);
+        notification.setLatestEventInfo(this, getResources().getString(R.string.app_name), text, contentIntent);        
 
         ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(MOOD_NOTIFICATIONS, notification);
     }

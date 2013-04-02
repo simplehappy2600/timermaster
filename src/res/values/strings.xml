@@ -2,6 +2,11 @@
 
     <string name="app_name">语音报时</string>
     
+    <string name="notificationText">语音报时服务正在运行</string>  
+    
+    <string name="toastStartText">启动报时服务</string>
+    <string name="toastStopText">停止报时服务</string>
+    
    	<string name="minute1">1分钟</string>
     <string name="minute5">5分钟</string>
     <string name="minute10">10分钟</string>

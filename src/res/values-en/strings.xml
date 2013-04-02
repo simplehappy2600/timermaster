@@ -3,6 +3,11 @@
 
     <string name="app_name">VoiceTimeStrike</string>
     
+    <string name="notificationText">voice time strike service is running</string>
+    
+    <string name="toastStartText">start voice time strike service</string>
+    <string name="toastStopText">stop voice time strike service</string>
+    
    	<string name="minute1">one minute</string>
     <string name="minute5">five minute</string>
     <string name="minute10">ten minute</string>

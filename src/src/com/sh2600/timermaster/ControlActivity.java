@@ -35,12 +35,12 @@ public class ControlActivity extends Activity {
 		switch (v.getId()) {
 		case R.id.btnStart:
 			startService(new Intent(this, TimerService.class));
-			Toast.makeText(this, "启动报时服务", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, R.string.toastStartText, Toast.LENGTH_SHORT).show();			
 			break;
 		case R.id.btnStop:
 			boolean r = stopService(new Intent(this, TimerService.class));
 			Log.v(tag, "stopService return " + r);
-			Toast.makeText(this, "停止报时服务", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, R.string.toastStopText, Toast.LENGTH_SHORT).show();
 			break;	
 		case R.id.btnPlay:
 			Intent intent = new Intent(this, TimerService.class);
