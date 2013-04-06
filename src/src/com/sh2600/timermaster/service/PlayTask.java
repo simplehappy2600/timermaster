@@ -10,6 +10,7 @@ import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
+import android.os.PowerManager;
 import android.util.Log;
 
 /**
@@ -27,10 +28,15 @@ public class PlayTask extends AsyncTask<Void, Void, Void> implements MediaPlayer
 	private int idx = 0;
 	
 	private AssetManager assetManager;
-	//private Context context;	
+	private Context context;	
 	
-	public PlayTask(Context context){		
+	public PlayTask(Context context){
+		this.context = context;
 		this.assetManager = context.getAssets();				
+	}
+	
+	public void play(){
+		doInBackground(null, null);
 	}
 
 	@Override
@@ -44,7 +50,8 @@ public class PlayTask extends AsyncTask<Void, Void, Void> implements MediaPlayer
 		addSound(c.get(Calendar.HOUR_OF_DAY), false);
 		addSound(c.get(Calendar.MINUTE), true);		
 		
-		mp = new MediaPlayer(); 
+		mp = new MediaPlayer();
+		mp.setWakeMode(this.context, PowerManager.PARTIAL_WAKE_LOCK);
 		mp.setOnCompletionListener(this);			
 				
 		play(sounds.get(idx++));

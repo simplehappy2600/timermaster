@@ -19,6 +19,9 @@ import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 
+import com.google.code.microlog4android.Logger;
+import com.google.code.microlog4android.LoggerFactory;
+import com.google.code.microlog4android.config.PropertyConfigurator;
 import com.sh2600.timermaster.ControlActivity;
 import com.sh2600.timermaster.R;
 import com.sh2600.timermaster.common.CVal;
@@ -28,6 +31,7 @@ import com.sh2600.timermaster.common.Utils;
 public class TimerService extends Service implements SharedPreferences.OnSharedPreferenceChangeListener, TextToSpeech.OnInitListener {
 	
 	private static final String tag = TimerService.class.getSimpleName();
+	private static final Logger logger = LoggerFactory.getLogger(TimerService.class);
 	
 	private static int MOOD_NOTIFICATIONS = R.layout.activity_control;
 	
@@ -57,6 +61,8 @@ public class TimerService extends Service implements SharedPreferences.OnSharedP
 	public void onCreate() {
 		super.onCreate();
 		Log.d(tag, "onCreate");
+		PropertyConfigurator.getConfigurator(this).configure();
+		logger.info("onCreate");
 		
 		mTts = new TextToSpeech(this, this);
 		
@@ -99,8 +105,8 @@ public class TimerService extends Service implements SharedPreferences.OnSharedP
 		Log.d(tag, "registerReceiver media button");
 		IntentFilter intentFilter = new IntentFilter(Intent.ACTION_MEDIA_BUTTON);
 		//TODO
-		intentFilter.setPriority(100);
-		//intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY - 1);
+		//intentFilter.setPriority(100);
+		intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY - 1);
 		registerReceiver(mediaButtonReceiver, intentFilter);		
 	}
 	
@@ -121,7 +127,7 @@ public class TimerService extends Service implements SharedPreferences.OnSharedP
 		Intent intent = Utils.buildCmdIntent(this, TimerService.class, 
 				CVal.Action.TimeAutoQuit, CVal.Cmd.CMD_Quit
 		);		
-		PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, 0);		
+		PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);		
 	    this.alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), CVal.DayMs, pendingIntent);
 	}	
 	
@@ -137,6 +143,7 @@ public class TimerService extends Service implements SharedPreferences.OnSharedP
 		
 		int cmdType = intent.getIntExtra(CVal.Cmd.cmdtype, CVal.Cmd.CMD_None);
 		if (cmdType != CVal.Cmd.CMD_None){
+			logger.info("onStartCommand: cmdType=" + cmdType + ", " + Utils.getDateString(Calendar.getInstance().getTime()));
 			handler.sendEmptyMessage(cmdType);
 		}
 
@@ -147,7 +154,7 @@ public class TimerService extends Service implements SharedPreferences.OnSharedP
 		
 		@Override
 		public void handleMessage(Message msg) {
-			
+			logger.info("handleMessage: cmdType=" + msg.what + ", " + Utils.getDateString(Calendar.getInstance().getTime()));
 			switch (msg.what) {
 			case CVal.Cmd.CMD_Quit:
 				stopSelf();
@@ -226,7 +233,8 @@ public class TimerService extends Service implements SharedPreferences.OnSharedP
 	private void playsound(){
 
 		if ("cn".equalsIgnoreCase(this.configParam.language)){
-			new PlayTask(TimerService.this).execute();
+			//new PlayTask(TimerService.this).execute();
+			new PlayTask(TimerService.this).play();
 		}
 		else{
 			new PlayEnTask(mTts).play();	

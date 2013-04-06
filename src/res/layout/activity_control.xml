@@ -1,53 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- 
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@android:color/transparent"       
-    android:gravity="center" >
-
-    <ImageButton
-        android:id="@+id/btnStart"
+    android:background="@android:color/transparent"
+    android:orientation="vertical" >
+ -->
+  <RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"      
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:background="@android:color/transparent" > 
+    <com.google.ads.AdView
+        android:id="@+id/adView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="a151602b0d22fd4"
+        ads:loadAdOnCreate="true"
+        ads:testDevices="95E40EC60634C846302C412E63FBA347" 
         android:layout_alignParentTop="true"
-        android:onClick="btnClick"
-        android:src="@drawable/start" />
-    
-    <ImageButton
-        android:id="@+id/btnStop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@id/btnStart"
-        android:onClick="btnClick"
-        android:src="@drawable/stop" />
-    
-    <ImageButton
-        android:id="@+id/btnPlay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@id/btnStop"
-        android:onClick="btnClick"
-        android:src="@drawable/play" />    
+        />
 
-    <ImageButton
-        android:id="@+id/btnSetting"
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/btnStop"
-        android:layout_alignLeft="@id/btnStop"
-        android:onClick="btnClick"
-        android:src="@drawable/setting" />
+        android:background="@android:color/transparent"
+        android:layout_below="@id/adView"
+        android:gravity="center" 
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_centerInParent="true"
+        >
 
-    <ImageButton
-        android:id="@+id/btnCancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/btnSetting"
-        android:layout_alignLeft="@id/btnSetting"
-        android:onClick="btnClick"
-        android:src="@drawable/quit" />
+        <ImageButton
+            android:id="@+id/btnStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:onClick="btnClick"
+            android:src="@drawable/start" />
 
-</RelativeLayout>
+        <ImageButton
+            android:id="@+id/btnStop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@id/btnStart"
+            android:onClick="btnClick"
+            android:src="@drawable/stop" />
+
+        <ImageButton
+            android:id="@+id/btnPlay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@id/btnStop"
+            android:onClick="btnClick"
+            android:src="@drawable/play" />
+
+        <ImageButton
+            android:id="@+id/btnSetting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/btnStop"
+            android:layout_below="@id/btnStop"
+            android:onClick="btnClick"
+            android:src="@drawable/setting" />
+
+        <ImageButton
+            android:id="@+id/btnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/btnSetting"
+            android:layout_below="@id/btnSetting"
+            android:onClick="btnClick"
+            android:src="@drawable/quit" />
+    </RelativeLayout>
+    </RelativeLayout>
+<!-- 
+</LinearLayout>
+ -->

@@ -133,7 +133,7 @@ public class TimerTask {
 		}
 		Log.i(tag, "start startTime alarm " + Utils.getDateString(startTime.getTime()));
 		Intent intent = Utils.buildCmdIntent(this.context, TimerService.class, CVal.Action.TimeIntervalStart, CVal.Cmd.CMD_StartInterval);		
-	    PendingIntent pendingIntent = PendingIntent.getService(this.context, 0, intent, 0);
+	    PendingIntent pendingIntent = PendingIntent.getService(this.context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 	    this.alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, startTime.getTimeInMillis(), CVal.DayMs, pendingIntent);		
 	}
 	
@@ -151,7 +151,7 @@ public class TimerTask {
 		}
 		Log.i(tag, "set stopTime alarm " + Utils.getDateString(time.getTime()));
 		Intent intent = Utils.buildCmdIntent(this.context, TimerService.class, CVal.Action.TimeIntervalStop, CVal.Cmd.CMD_StopInterval);		
-	    PendingIntent pendingIntent = PendingIntent.getService(this.context, 0, intent, 0);
+	    PendingIntent pendingIntent = PendingIntent.getService(this.context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 	    this.alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time.getTimeInMillis(), CVal.DayMs, pendingIntent);	
 	}
 	
@@ -182,7 +182,7 @@ public class TimerTask {
 		Intent intent = Utils.buildCmdIntent(this.context, TimerService.class, 
 				CVal.Action.TimeIntervalInterval, CVal.Cmd.CMD_IntervalInterval
 		);		
-	    PendingIntent pendingIntent = PendingIntent.getService(this.context, 0, intent, 0);
+	    PendingIntent pendingIntent = PendingIntent.getService(this.context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 	    this.alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time.getTimeInMillis(), this.interval*60*1000, pendingIntent);		
 	}
 	
