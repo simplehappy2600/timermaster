@@ -2,7 +2,9 @@ package com.sh2600.timermaster;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -15,6 +17,7 @@ import com.sh2600.timermaster.service.TimerService;
 public class ControlActivity extends Activity {
 	
 	static final String tag = ControlActivity.class.getSimpleName();
+	static final String keyFirstRun = "firstRun";
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {		
@@ -23,6 +26,15 @@ public class ControlActivity extends Activity {
 		super.onCreate(savedInstanceState);
 	       
 		setContentView(R.layout.activity_control);
+		
+		boolean firstRun = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(keyFirstRun, true);
+		if (firstRun){
+			SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+			editor.putBoolean(keyFirstRun, false);
+			editor.commit();
+			Intent intent = new Intent(this, SettingsActivity.class);
+			startActivity(intent);
+		}
 		
 	}
 	

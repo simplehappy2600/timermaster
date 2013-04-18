@@ -82,7 +82,7 @@
         <!-- about -->
 		<Preference 
 	            android:key="pref_key_about"            
-	            android:summary="Copyright@http://simplehappy.iteye.com"
+	            android:summary="Copyright@jyl9wh@gmail.com"
 	            android:title="@string/about" />
 	</PreferenceCategory>          
 
