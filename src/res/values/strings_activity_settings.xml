@@ -1,7 +1,5 @@
 <resources>
     
-    <string name="pref_key_boot_enable">pref_key_boot_enable</string>
-    
     <string-array name="pref_key_interval_titles">
         <item>@string/minute1</item>
         <item>@string/minute5</item>
@@ -9,14 +7,6 @@
         <item>@string/minute15</item>
         <item>@string/minute30</item>
         <item>@string/minute60</item>        
-    </string-array>
-    <string-array name="pref_key_interval_values">
-        <item>1</item>
-        <item>5</item>
-        <item>10</item>
-        <item>15</item>
-        <item>30</item>
-        <item>60</item>        
     </string-array>
     <!--     
     <integer-array ></integer-array>
@@ -26,20 +16,10 @@
         <item>@string/singleClick</item>
         <item>@string/doubleClick</item>        
     </string-array>
-   
-    <string-array name="pref_headset_values">
-        <item>single</item>
-        <item>double</item>
-    </string-array>   
     
     <string-array name="pref_key_language_titles">
         <item>@string/languageChinaese</item>
         <item>@string/languageEnglish</item>
     </string-array>
-   
-    <string-array name="pref_key_language_values">
-        <item>cn</item>
-        <item>en</item>
-    </string-array>    
 
 </resources>

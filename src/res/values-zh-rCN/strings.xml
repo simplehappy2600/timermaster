@@ -1,0 +1,72 @@
+<resources>
+
+    <string name="app_name">语音报时</string>
+    
+    <string name="notificationText">语音报时服务正在运行</string>  
+    
+    <string name="toastStartText">启动报时服务</string>
+    <string name="toastStopText">停止报时服务</string>
+    
+   	<string name="minute1">1分钟</string>
+    <string name="minute5">5分钟</string>
+    <string name="minute10">10分钟</string>
+    <string name="minute15">15分钟</string>
+    <string name="minute30">30分钟</string>
+    <string name="minute60">60分钟</string>
+    
+    <string name="singleClick">单击</string>
+    <string name="doubleClick">双击</string>
+    
+    <string name="languageChinaese">中文</string>
+    <string name="languageEnglish">英语</string>
+    
+    <string name="language">语言</string>
+    <string name="about">关于</string>
+    <string name="timerInerval">时间间隔(分)</string>    
+    
+    
+    <string name="enableTimestrike">启用定点报时</string>
+    <string name="timestrike">定时报时</string>
+    <string name="startTime">开始时间</string>
+    <string name="stopTime">停止时间</string>    
+	
+    <string name="wireControl">线控</string>
+    <string name="usewireControl">使用耳机线控</string>    
+    <string name="wireControlWay">线控方式</string>
+    <string name="wireControlWaySummary">单击或双击播放按钮</string>
+    
+    <string name="pref_key_boot_title">开机自动启动</string>
+    
+    <string name="pref_key_quit_time_summary">设置为00:00表示不退出</string>
+    <string name="pref_key_quit_time_title">自动退出报时服务</string>
+    
+    <string name="pref_key_timeformat12_summary">24小时格式</string>
+    <string name="pref_key_timeformat12_title">使用12小时格式</string>
+    
+    <string name="language_default">cn</string>
+    
+    <string name="btnOk">确定</string>
+    <string name="btnCancel">取消</string>    
+    
+    <string name="pref_key_boot_enable">pref_key_boot_enable</string>
+    
+    <string-array name="pref_key_interval_values">
+        <item>1</item>
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>        
+    </string-array>
+    
+    <string-array name="pref_headset_values">
+        <item>single</item>
+        <item>double</item>
+    </string-array>     
+   
+    <string-array name="pref_key_language_values">
+        <item>cn</item>
+        <item>en</item>
+    </string-array>     
+    
+</resources>
